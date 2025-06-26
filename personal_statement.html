@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Personal Statement Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input[type="text"], input[type="number"] { padding: 8px; width: 300px; margin: 5px 0; }
+        input[type="submit"] { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        input[type="submit"]:hover { background-color: #45a049; }
+        .statement { border: 1px solid #ddd; padding: 15px; margin-top: 20px; border-radius: 5px; background-color: #f9f9f9; white-space: pre-wrap; }
+        .attribute-list { list-style-type: none; padding-left: 0; margin: 0; }
+        .attribute-list li { padding: 1px 0; border-bottom: 1px solid #eee; }
+        .section-title { font-weight: bold; margin-top: 15px; margin-bottom: 3px; }
+        .ai-statement { margin-top: 20px; padding: 15px; border: 1px solid #4CAF50; background-color: #e8f5e9; border-radius: 5px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h2>Generate Personal Statement</h2>
+    <form method="post">
+        <label for="person_id">Enter Person ID:</label><br>
+        <input type="number" name="person_id" id="person_id" placeholder="Person ID" required><br><br>
+        <input type="submit" value="Generate">
+    </form>
+    {% if statement %}
+        <h3>Person Details:</h3>
+        <div class="statement">
+            {% set in_list = false %}
+            {% for line in statement.split('\n') %}
+                {% if line.endswith('Attributes:') %}
+                    {% if in_list %}
+                        </ul>
+                    {% endif %}
+                    <p class="section-title">{{ line }}</p>
+                    <ul class="attribute-list">
+                    {% set in_list = true %}
+                {% elif line == '' %}
+                    {% if in_list %}
+                        </ul>
+                        {% set in_list = false %}
+                    {% endif %}
+                {% else %}
+                    <li>{{ line }}</li>
+                {% endif %}
+            {% endfor %}
+            {% if in_list %}
+                </ul>
+            {% endif %}
+        </div>
+    {% endif %}
+    {% if ai_statement %}
+        <h3>AI Generated Personal Statement:</h3>
+        <div class="ai-statement">{{ ai_statement }}</div>
+    {% endif %}
+    {% if message %}
+        <p style="color: red;">{{ message }}</p>
+    {% endif %}
+</body>
+</html>

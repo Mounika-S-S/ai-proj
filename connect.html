@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Connect Students and Employees</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label { font-weight: bold; }
+        input, select, button, textarea { padding: 8px; margin: 5px 0; width: 300px; }
+        button { width: 150px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        .mentor, .mentee { border: 1px solid #ddd; padding: 10px; margin-top: 10px; border-radius: 5px; }
+        .mentor { background-color: #f9f9f9; }
+        .mentee { background-color: #e9f7ef; }
+    </style>
+    <script>
+        function toggleInterest() {
+            var connectType = document.getElementById('connect_type').value;
+            var interestDiv = document.getElementById('interestDiv');
+            if (connectType === 'student' || connectType === 'fresher') {
+                interestDiv.style.display = 'block';
+            } else {
+                interestDiv.style.display = 'none';
+            }
+        }
+        window.onload = function() {
+            toggleInterest();
+            document.getElementById('connect_type').addEventListener('change', toggleInterest);
+        }
+    </script>
+</head>
+<body>
+    <h1>Connect Students to Employees</h1>
+    <form method="post">
+        <label for="connect_type">Connect as:</label>
+        <select name="connect_type" id="connect_type">
+            <option value="student">Student</option>
+            <option value="fresher">Fresher</option>
+            <option value="employee">Employee</option>
+        </select><br><br>
+
+        <label for="user_id">Enter ID:</label>
+        <input type="number" name="user_id" id="user_id" required><br><br>
+
+        <!-- Removed interest input as Employee has no interest attribute -->
+        <!--
+        <div id="interestDiv" style="display:none;">
+            <label for="interest">Enter your Interest:</label>
+            <input type="text" name="interest" id="interest"><br><br>
+        </div>
+        -->
+
+        <button type="submit">Connect</button>
+    </form>
+
+    {% if message %}
+        <p style="color: red;">{{ message }}</p>
+    {% endif %}
+
+    {% if mentor_mentee %}
+        <h2>Mentor-Mentee Matches:</h2>
+        {% for pair in mentor_mentee %}
+            <div class="mentee">
+                <h3>Mentee: {{ pair.mentee_person.name }} (ID: {{ pair.mentee.id }})</h3>
+                <p>Interest: {{ pair.mentee.interest }}</p>
+            </div>
+            <div class="mentor">
+                <h3>Mentor: {{ pair.mentor_person.name if pair.mentor_person else pair.mentor.empname }} (ID: {{ pair.mentor.id }})</h3>
+                <p>Email: {{ (pair.mentor_person.email or '') if pair.mentor_person else '' }}</p>
+            </div>
+            <hr>
+        {% endfor %}
+    {% elif details %}
+        <h2>Working Details:</h2>
+        {% for detail in details %}
+            <p>Employee ID: {{ detail.employee_id }}, Project ID: {{ detail.projectid }}, Role: {{ detail.role_in_team }}</p>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>
